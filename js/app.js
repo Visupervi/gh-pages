@@ -5,17 +5,47 @@
 	angular
 		.module('todoApp', [])
 		.controller('TodoController', ['$scope', function ($scope) {
-
+			var vm = $scope;
 			// 数据：
 			// name 表示任务名称
 			// isCompleted 表示任务是否完成的状态
 			// id 唯一标识
-			$scope.todoList = [
+			vm.todoList = [
 				{ id: 1, name: '抽烟', isCompleted: false },
 				{ id: 2, name: '喝酒', isCompleted: true },
-				{ id: 3, name: '烫头', isCompleted: false },
+				{ id: 3, name: '烫头', isCompleted: false }
 			];
-			
+
+
+
+		//	添加数据
+
+			vm.add = false;
+			vm.addItem = function () {
+
+			}
+		//	删除数据
+
+			// vm.del = false;
+			vm.delItem = function (id) {
+				for(var i = 0; i < vm.todoList.length;i++){
+					if(vm.todoList[i].id === id){
+						vm.todoList.splice(i,1);
+					}
+				}
+			}
+
+		//	复选框事件
+		vm.check = false;
+		vm.isChecked = function () {
+			for(var i = 0;i < vm.todoList.length;i++){
+				vm.todoList[i].isCompleted = vm.check;
+			}
+
+		}
+
+
+
 		}]);
 
 })(angular);
