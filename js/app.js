@@ -16,12 +16,34 @@
 				{ id: 3, name: '烫头', isCompleted: false }
 			];
 
-
+			var todoList = vm.todoList;
 
 		//	添加数据
 
-			vm.add = false;
+			vm.addInfo = "";
 			vm.addItem = function () {
+				if(vm.addInfo.trim() ===""){
+					return false;
+				}
+				var id,
+					lenght = todoList.length;
+				id = lenght === 0 ? 1 : todoList[lenght-1].id + 1;
+				todoList.push({id:id,
+				name:vm.addInfo,
+				isCompleted:false})
+				vm.addInfo = "";
+			}
+
+		//	编辑数据
+
+
+			vm.editData= function () {
+
+			}
+
+		//	更新数据
+
+			vm.updateData = function () {
 
 			}
 		//	删除数据
