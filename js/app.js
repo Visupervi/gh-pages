@@ -43,7 +43,17 @@
 			}
 
 		}
-
+    //实现单选框全部选中是全选按钮也选中
+			vm.isCheckedAll = function () {
+				for(var i = 0;i < vm.todoList.length;i++){
+					if(vm.todoList[i].isCompleted === false){
+						vm.check = false;
+						break;
+					}else{
+						vm.check = true;
+					}
+				}
+			}
 
 
 		}]);
