@@ -12,7 +12,7 @@
 			// id 唯一标识
 			vm.todoList = [
 				{ id: 1, name: '抽烟', isCompleted: false },
-				{ id: 2, name: '喝酒', isCompleted: true },
+				{ id: 2, name: '喝酒', isCompleted: false },
 				{ id: 3, name: '烫头', isCompleted: false }
 			];
 
@@ -30,7 +30,7 @@
 				id = lenght === 0 ? 1 : todoList[lenght-1].id + 1;
 				todoList.push({id:id,
 				name:vm.addInfo,
-				isCompleted:false})
+				isCompleted:false});
 				vm.addInfo = "";
 			}
 
@@ -49,9 +49,9 @@
 
 			// vm.del = false;
 			vm.delItem = function (id) {
-				for(var i = 0; i < vm.todoList.length;i++){
-					if(vm.todoList[i].id === id){
-						vm.todoList.splice(i,1);
+				for(var i = 0; i < todoList.length;i++){
+					if(todoList[i].id === id){
+						todoList.splice(i,1);
 					}
 				}
 			}
@@ -59,15 +59,15 @@
 		//	复选框事件
 		vm.check = false;
 		vm.isChecked = function () {
-			for(var i = 0;i < vm.todoList.length;i++){
-				vm.todoList[i].isCompleted = vm.check;
+			for(var i = 0;i < todoList.length;i++){
+				todoList[i].isCompleted = vm.check;
 			}
 
 		}
     //实现单选框全部选中是全选按钮也选中
 			vm.isCheckedAll = function () {
-				for(var i = 0;i < vm.todoList.length;i++){
-					if(vm.todoList[i].isCompleted === false){
+				for(var i = 0;i < todoList.length;i++){
+					if(todoList[i].isCompleted === false){
 						vm.check = false;
 						break;
 					}else{
@@ -76,7 +76,43 @@
 				}
 			}
 
+		//	清除选中的项
 
+			vm.clearSelect = function () {
+				var tempArr = [];
+				for(var i = 0; i < todoList.length;i++){
+					if(!todoList[i].isCompleted){
+						tempArr.push(todoList[i]);
+					}
+				}
+				todoList.length = 0;
+				[].push.apply(todoList,tempArr);
+
+			}
+
+		//	清除按钮的显示与隐藏
+			vm.showClear = function () {
+				var ret = false;
+				for(var i = 0; i < todoList.length;i++){
+					if (todoList[i].isCompleted){
+						ret = true;
+						break;
+					}
+				}
+				return ret;
+			}
+
+    //显示剩余的项数
+
+			vm.leftNum = function () {
+				var count = 0;
+				for(var i = 0 ;i < todoList.length;i++){
+					if(!todoList[i].isCompleted){
+						count++;
+					}
+				}
+				return count;
+			}
 		}]);
 
 })(angular);
