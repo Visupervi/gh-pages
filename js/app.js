@@ -35,16 +35,15 @@
 			}
 
 		//	编辑数据
-
-
-			vm.editData= function () {
-
+			vm.editId = -1;
+			vm.editData = function (id) {
+				vm.editId =  id;
 			}
 
 		//	更新数据
 
-			vm.updateData = function () {
-
+			vm.updateData = function (id) {
+				vm.editId = -1;
 			}
 		//	删除数据
 
