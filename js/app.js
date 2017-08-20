@@ -1,69 +1,50 @@
 (function (angular) {
 	'use strict';
-
 	// Your starting point. Enjoy the ride!
 	angular
-		.module('todoApp', [])
-		.controller('TodoController', ['$scope',"$location",function ($scope,$location) {
+		.module('todoApp', ["todoApp.dataService","ngRoute"])
+		.config(function ($routeProvider) {
+			$routeProvider
+				.when('/:status?', {
+					// 因为 app.js 最终是在 index.html 页面中执行的
+					// 所以，路径是相对于 index.html 的
+					templateUrl: './views/todo.html',
+					controller: 'TodoCtrl'
+				})
+		})
+		.controller('TodoCtrl', ["$scope","$location","todoService","$routeParams",function ($scope,$location,todoService,$routeParams) {
+			// console.log($routeParams);
 			var vm = $scope;
-			// 数据：
-			// name 表示任务名称
-			// isCompleted 表示任务是否完成的状态
-			// id 唯一标识
-			vm.todoList = [
-				{ id: 1, name: '抽烟', isCompleted: false },
-				{ id: 2, name: '喝酒', isCompleted: false },
-				{ id: 3, name: '烫头', isCompleted: false }
-			];
-
-			var todoList = vm.todoList;
-
+			var todoList = todoService.todoList;
+			vm.todoList = todoList;//注意这个地方，一定要在scope中定义一下子，要不然在HTML中不能引用啊，注意注意！！
+			// console.log(todoList);
 		//	添加数据
-
 			vm.addInfo = "";
-			vm.addItem = function () {
+			vm.addItem = function(){
 				if(vm.addInfo.trim() ===""){
-					return false;
+						return false;
 				}
-				var id,
-					lenght = todoList.length;
-				id = lenght === 0 ? 1 : todoList[lenght-1].id + 1;
-				todoList.push({id:id,
-				name:vm.addInfo,
-				isCompleted:false});
+				todoService.addData(vm.addInfo);
 				vm.addInfo = "";
-			}
-
+			};
 		//	编辑数据
 			vm.editId = -1;
 			vm.editData = function (id) {
-				vm.editId =  id;
-			}
-
+				vm.editId = todoService.editItem(vm.editId,id);
+			};
 		//	更新数据
-
 			vm.updateData = function (id) {
 				vm.editId = -1;
-			}
+			};
 		//	删除数据
-
-			// vm.del = false;
 			vm.delItem = function (id) {
-				for(var i = 0; i < todoList.length;i++){
-					if(todoList[i].id === id){
-						todoList.splice(i,1);
-					}
-				}
-			}
-
+				todoService.delData(id);
+			};
 		//	复选框事件
 		vm.check = false;
 		vm.isChecked = function () {
-			for(var i = 0;i < todoList.length;i++){
-				todoList[i].isCompleted = vm.check;
-			}
-
-		}
+			todoService.isCheck(vm.check);
+		};
     //实现单选框全部选中是全选按钮也选中
 			vm.isCheckedAll = function () {
 				for(var i = 0;i < todoList.length;i++){
@@ -74,79 +55,38 @@
 						vm.check = true;
 					}
 				}
-			}
-
+				todoService.save();
+			};
 		//	清除选中的项
-
-			vm.clearSelect = function () {
-				var tempArr = [];
-				for(var i = 0; i < todoList.length;i++){
-					if(!todoList[i].isCompleted){
-						tempArr.push(todoList[i]);
-					}
-				}
-				todoList.length = 0;
-				[].push.apply(todoList,tempArr);
-
-			}
-
+			vm.clearSelect = todoService.clearComplete;
 		//	清除按钮的显示与隐藏
-			vm.showClear = function () {
-				var ret = false;
-				for(var i = 0; i < todoList.length;i++){
-					if (todoList[i].isCompleted){
-						ret = true;
-						break;
-					}
-				}
-				return ret;
-			}
-
-    //显示剩余的项数
-
-			vm.leftNum = function () {
-				var count = 0;
-				for(var i = 0 ;i < todoList.length;i++){
-					if(!todoList[i].isCompleted){
-						count++;
-					}
-				}
-				return count;
-			}
-
+			vm.showClear = todoService.showHide;
+    	//显示剩余的项数
+			vm.leftNum = todoService.showLeft;
+		//	显示
 		//	显示不同的任务
-
 			vm.status = undefined;
-			// vm.selectAll = function () {
-			// 	vm.status = undefined;
-			// }
-			// vm.selectActive = function () {
-			// 	vm.status = false;
-			// }
-			// vm.selectComplete = function () {
-			// 	vm.status = true;
-			// }
-
+			var dataObj = {
+				active:false,
+				completed:true
+			}
+			vm.status = dataObj[$routeParams.status];
 		//	根据url显示不同
-			$scope.location = $location;
-			$scope.$watch("location.url()",function (curVal,preVal) {
-				console.log(curVal);
-				switch(curVal){
-					case"/":
-						vm.status = undefined;
-					break;
-					case "/active":
-						vm.status = false;
-					break;
-					case "/completed":
-						vm.status = true;
-					break;
-
-				}
-			})
-
-
-
+		// 	$scope.location = $location;
+		// 	$scope.$watch("location.url()",function (curVal,preVal) {
+		// 		// console.log(curVal);
+		// 		switch(curVal){
+		// 			case"/":
+		// 				vm.status = undefined;
+		// 			break;
+		// 			case "/active":
+		// 				vm.status = false;
+		// 			break;
+		// 			case "/completed":
+		// 				vm.status = true;
+		// 			break;
+		// 		}
+		// 		todoService.save();
+		// 	})
 		}]);
-
 })(angular);
